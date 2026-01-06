@@ -1,4 +1,5 @@
-import { aj } from "../utils/arcjet.js";
+import aj from "../utils/arcjet.js";
+import { isSpoofedBot } from "@arcjet/inspect";
 
 const arcjetProtection = async (req, res, next) => {
   try {
@@ -10,21 +11,22 @@ const arcjetProtection = async (req, res, next) => {
           .json({ message: "Rate limit exceeded. Please try again later." });
       } else if (decision.reason.isBot()) {
         return res.status(403).json({ message: "Bot access denied." });
+      } else if (decision.results.some(isSpoofedBot)) {
+        return res.status(403).json({
+          error: "Spoofed bot detected",
+          message: "Malicious bot activity detected.",
+        });
       } else {
         return res.status(403).json({
           message: "Access denied by security policy.",
         });
       }
-      next();
-      if (decision.results.some(isSpoofedBot)) {
-        return res.status(403).json({
-          error: "Spoofed bot detected",
-          message: "Malicious bot activity detected.",
-        });
-      }
     }
+    next();
   } catch (error) {
     console.log("Arcjet Protection Error:", error);
     next();
   }
 };
+
+export default arcjetProtection;

@@ -1,6 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
-import { ENV } from "../.env";
+import dotenv from "dotenv";
 import fs from "fs";
+
+dotenv.config();
 
 cloudinary.config({
   cloud_name: process.env.cloud_name,
@@ -24,3 +26,5 @@ const uploadOnClodinary = async (localFilePath) => {
     return null;
   }
 };
+
+export { uploadOnClodinary };

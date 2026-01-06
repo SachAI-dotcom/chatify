@@ -1,6 +1,3 @@
-import express from 'express';
-
-
 //create a industrial grade async handler function
 const asyncHandler = (fn)=>{
     return async(req, res, next)=>{

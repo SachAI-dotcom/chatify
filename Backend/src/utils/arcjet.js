@@ -1,9 +1,4 @@
 import arcjet, { shield, detectBot, tokenBucket } from "@arcjet/node";
-import { isSpoofedBot } from "@arcjet/inspect";
-import express from "express";
-
-const app = express();
-const port = proccess.env.port;
 
 const aj = arcjet({
   // Get your site key from https://app.arcjet.com and set it as an environment
@@ -36,4 +31,5 @@ const aj = arcjet({
     }),
   ],
 });
-export default {aj};
+
+export default aj;
