@@ -1,24 +1,25 @@
 import express from "express";
 import {
-  signup,
-  login,
-  logout,
+  loginUser,
+  registerUser,
+  logOut,
+  generateRefreshTokenAndAccessToken,
   updateProfile,
-} from "../controllers/auth.controller.js";
-import { protectRoute } from "../middleware/auth.middleware.js";
-import { arcjetProtection } from "../middleware/arcjet.middleware.js";
+} from "../controllers/user.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
+import arcjetProtection from "../middlewares/arcjet.middleware.js";
 
 const router = express.Router();
 
 router.use(arcjetProtection);
 
-router.post("/signup", signup);
-router.post("/login", login);
-router.post("/logout", logout);
+router.post("/signup", registerUser);
+router.post("/login", loginUser);
+router.post("/logout", authMiddleware, logOut);
 
-router.put("/update-profile", protectRoute, updateProfile);
+router.put("/update-profile", authMiddleware, updateProfile);
 
-router.get("/check", protectRoute, (req, res) =>
+router.get("/check", authMiddleware, (req, res) =>
   res.status(200).json(req.user)
 );
 

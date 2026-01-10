@@ -27,4 +27,4 @@ const uploadOnClodinary = async (localFilePath) => {
   }
 };
 
-export { uploadOnClodinary };
+export { uploadOnClodinary, cloudinary };
