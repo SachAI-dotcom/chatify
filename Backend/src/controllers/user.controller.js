@@ -4,7 +4,9 @@ import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
 import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
-
+import { uploadOnClodinary } from "../utils/cloudinary.js";
+import { upload } from "../middlewares/multer.middleware.js";
+import fs from 'fs';
 const generateRefreshTokenAndAccessToken = asyncHandler(
   async (req, res, next) => {
     const user = req.user;
@@ -118,5 +120,27 @@ const logOut = asyncHandler(async (req, res) => {
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "User logged Out"));
 });
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { profilePic } = req.body;
+    if (!profilePic) return res.status(400).json({ message: "Profile pic is required" });
+
+    const userId = req.user._id;
+
+    const uploadResponse = await cloudinary.uploader.upload(profilePic);
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: uploadResponse.secure_url },
+      { new: true }
+    );
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log("Error in update profile:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 export { registerUser, loginUser, logOut, generateRefreshTokenAndAccessToken };
